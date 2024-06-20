@@ -35,4 +35,9 @@ public class UserSession {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public void logout() {
+        this.id = 0;
+        this.username = null;
+    }
 }

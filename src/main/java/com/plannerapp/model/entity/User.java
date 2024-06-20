@@ -3,6 +3,7 @@ package com.plannerapp.model.entity;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -21,8 +22,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @OneToMany(targetEntity = Task.class, mappedBy = "user")
-    private List<Task> assignedTasks;
+    @OneToMany(targetEntity = Task.class, cascade = CascadeType.REMOVE)
+    private Set<Task> assignedTasks;
 
     public User() {
     }
@@ -59,11 +60,11 @@ public class User {
         this.email = email;
     }
 
-    public List<Task> getAssignedTasks() {
+    public Set<Task> getAssignedTasks() {
         return assignedTasks;
     }
 
-    public void setAssignedTasks(List<Task> assignedTasks) {
+    public void setAssignedTasks(Set<Task> assignedTasks) {
         this.assignedTasks = assignedTasks;
     }
 }

@@ -3,11 +3,14 @@ package com.plannerapp.controller;
 import com.plannerapp.config.UserSession;
 import com.plannerapp.model.dto.AddTaskDto;
 import com.plannerapp.service.TaskService;
+import com.plannerapp.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -18,10 +21,12 @@ public class TaskController {
 
     private final UserSession userSession;
     private final TaskService taskService;
+    private final UserService userService;
 
-    public TaskController(UserSession userSession, TaskService taskService) {
+    public TaskController(UserSession userSession, TaskService taskService, UserService userService) {
         this.userSession = userSession;
         this.taskService = taskService;
+        this.userService = userService;
     }
 
     @ModelAttribute("addTaskData")
@@ -63,6 +68,36 @@ public class TaskController {
             return "redirect:/";
         }
         return "redirect:home";
+    }
+
+    @Transactional
+    @PostMapping("/assign-to-me/{taskId}")
+    public String assignTaskToMe(@PathVariable long taskId) {
+        if (!userSession.isLoggedIn()) {
+            return "redirect:/";
+        }
+        userService.assignToUser(userSession.getId(), taskId);
+
+        return "redirect:/";
+    }
+
+    @Transactional
+    @PostMapping("/done-remove-task/{id}")
+    public String removeTask(@PathVariable long id) {
+        if (!userSession.isLoggedIn()) {
+            return "redirect:/";
+        }
+        taskService.removeTask(id);
+        return "redirect:/home";
+    }
+
+    @PostMapping("/return-task/{id}")
+    public String returnTask(@PathVariable long id) {
+        if (!userSession.isLoggedIn()) {
+            return "redirect:/";
+        }
+        userService.returnTask(id);
+        return "redirect:/home";
     }
 
 }

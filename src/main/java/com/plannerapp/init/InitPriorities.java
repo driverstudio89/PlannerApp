@@ -27,7 +27,7 @@ public class InitPriorities implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (priorityRepository.count() >= 0) {
+        if (priorityRepository.count() > 0) {
             return;
         }
 

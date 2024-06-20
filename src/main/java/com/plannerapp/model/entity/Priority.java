@@ -27,6 +27,8 @@ public class Priority {
     }
 
     public Priority(PriorityName priorityName, String description) {
+        this.priorityName = priorityName;
+        this.description = description;
     }
 
     public long getId() {
@@ -59,5 +61,12 @@ public class Priority {
 
     public void setTasks(Set<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    @Override
+    public String toString() {
+        String firstLetter = priorityName.name().substring(0, 1).toUpperCase();
+        String lastLetters = priorityName.name().substring(1).toLowerCase();
+        return firstLetter + lastLetters;
     }
 }

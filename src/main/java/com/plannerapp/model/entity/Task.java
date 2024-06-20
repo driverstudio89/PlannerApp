@@ -21,7 +21,7 @@ public class Task {
     @ManyToOne
     private Priority priority;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = User.class,  cascade = CascadeType.REMOVE)
     private User user;
 
     public Task() {
