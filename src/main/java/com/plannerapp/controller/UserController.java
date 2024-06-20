@@ -1,5 +1,6 @@
 package com.plannerapp.controller;
 
+import com.plannerapp.model.dto.UserLoginDto;
 import com.plannerapp.model.dto.UserRegisterDto;
 import com.plannerapp.service.UserService;
 import jakarta.validation.Valid;
@@ -24,8 +25,13 @@ public class UserController {
         return new UserRegisterDto();
     }
 
+    @ModelAttribute("loginData")
+    public UserLoginDto userLoginDto() {
+        return new UserLoginDto();
+    }
+
     @GetMapping("/users/register")
-    public String viewLogin() {
+    public String viewRegister() {
         return "register";
     }
 
@@ -56,6 +62,33 @@ public class UserController {
         }
 
         return "redirect:/users/login";
+
+    }
+
+    @GetMapping("/users/login")
+    public String viewLogin() {
+        return "login";
+    }
+
+    @PostMapping("users/login")
+    public String doLogin(
+            @Valid UserLoginDto userLoginDto,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("loginData", userLoginDto);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.loginData", bindingResult);
+            return "redirect:/users/login";
+        }
+
+        if (!userService.login(userLoginDto)) {
+            redirectAttributes.addFlashAttribute("wrongCredentials", true);
+            redirectAttributes.addFlashAttribute("loginData", userLoginDto);
+            return "redirect:/users/login";
+        }
+
+        return "redirect:/home";
 
     }
 
