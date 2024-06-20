@@ -1,5 +1,6 @@
 package com.plannerapp.controller;
 
+import com.plannerapp.config.UserSession;
 import com.plannerapp.model.dto.UserLoginDto;
 import com.plannerapp.model.dto.UserRegisterDto;
 import com.plannerapp.service.UserService;
@@ -16,8 +17,11 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final UserSession userSession;
+
+    public UserController(UserService userService, UserSession userSession) {
         this.userService = userService;
+        this.userSession = userSession;
     }
 
     @ModelAttribute("registerData")
@@ -32,6 +36,9 @@ public class UserController {
 
     @GetMapping("/users/register")
     public String viewRegister() {
+        if (userSession.isLoggedIn()) {
+            return "redirect:/home";
+        }
         return "register";
     }
 
@@ -40,6 +47,9 @@ public class UserController {
             @Valid UserRegisterDto userRegisterDto,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
+        if (userSession.isLoggedIn()) {
+            return "redirect:/home";
+        }
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("registerData", userRegisterDto);
@@ -67,6 +77,9 @@ public class UserController {
 
     @GetMapping("/users/login")
     public String viewLogin() {
+        if (userSession.isLoggedIn()) {
+            return "redirect:/home";
+        }
         return "login";
     }
 
@@ -75,6 +88,9 @@ public class UserController {
             @Valid UserLoginDto userLoginDto,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
+        if (userSession.isLoggedIn()) {
+            return "redirect:/home";
+        }
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("loginData", userLoginDto);
